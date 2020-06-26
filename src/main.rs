@@ -1,18 +1,19 @@
 use std::env;
+use std::error::Error;
 use std::fs;
 use std::process;
-use std::error::Error;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
-    
     match args.len() {
         1 => println!("Interpreting..."),
-        2 => run_file(&args[1]).unwrap_or_else(|err| {
-            println!("Error running file: {}", err);
-            process::exit(1);
-        }),
-        _ => println!("Usage: rlox [script]")
+        2 => {
+            if let Err(e) = run_file(&args[1]) {
+                println!("Error running file: {}", e);
+                process::exit(1);
+            }
+        }
+        _ => println!("Usage: rlox [script]"),
     }
 }
 
