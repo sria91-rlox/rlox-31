@@ -6,7 +6,7 @@ use std::process;
 
 mod token;
 mod token_type;
-mod serialise;
+mod traits;
 mod scanner;
 mod error_reporter;
 
