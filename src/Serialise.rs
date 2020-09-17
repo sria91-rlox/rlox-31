@@ -1,3 +1,3 @@
 pub trait Serialise {
-  fn to_string(&self) -> str;
+  fn to_string(&self) -> &str;
 }
