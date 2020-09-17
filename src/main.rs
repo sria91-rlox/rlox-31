@@ -7,7 +7,8 @@ use std::process;
 mod token;
 mod token_type;
 mod serialise;
-mod lexer;
+mod scanner;
+mod error_reporter;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -49,12 +50,4 @@ fn run_input(input: &String) {
     for token in tokens.iter() {
         // println!("{}", token)
     }
-}
-
-fn error(line: i8, message: &String) {
-    report_error(line, &String::new(), message)
-}
-
-fn report_error(line: i8, location: &String, message: &String) {
-    println!("[line {}] Error {}: {}", line, location, message);
 }
