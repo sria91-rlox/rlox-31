@@ -1,6 +1,6 @@
 use std::u16;
 use crate::token_type::TokenType;
-use crate::Serialise::Serialise;
+use crate::serialise::Serialise;
 
 pub struct Token {
   token: TokenType,

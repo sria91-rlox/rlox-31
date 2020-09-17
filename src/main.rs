@@ -6,7 +6,7 @@ use std::process;
 
 mod token;
 mod token_type;
-mod Serialise;
+mod serialise;
 mod lexer;
 
 fn main() {
