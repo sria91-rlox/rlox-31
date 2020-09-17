@@ -4,6 +4,11 @@ use std::fs;
 use std::io;
 use std::process;
 
+mod token;
+mod token_type;
+mod Serialise;
+mod lexer;
+
 fn main() {
     let args: Vec<String> = env::args().collect();
     match args.len() {
@@ -20,8 +25,9 @@ fn main() {
 
 fn run_file(file_name: &String) -> Result<(), Box<dyn Error>> {
     println!("\nRunning file {}\n", file_name);
-    let contents = fs::read_to_string(file_name)?;
-    println!("Contents: {}", contents);
+    let source = fs::read_to_string(file_name)?;
+    println!("source: {}", source);
+    run_input(&source);
     Ok(())
 }
 
@@ -32,8 +38,23 @@ fn run_repl() {
         print!("> ");
         input.clear();
         match stdin.read_line(input) {
-            Ok(_) => println!("{}", input),
-            Err(e) => println!("Error: {}", e),
+            Ok(_) => run_input(input),
+            Err(e) => println!("Error: {}", e)
         }
     }
+}
+
+fn run_input(input: &String) {
+    let tokens = lexer::scan_tokens(input);
+    for token in tokens.iter() {
+        // println!("{}", token)
+    }
+}
+
+fn error(line: i8, message: &String) {
+    report_error(line, &String::new(), message)
+}
+
+fn report_error(line: i8, location: &String, message: &String) {
+    println!("[line {}] Error {}: {}", line, location, message);
 }
