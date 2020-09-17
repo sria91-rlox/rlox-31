@@ -4,10 +4,10 @@ pub enum TokenType {
   Comma, Dot, Minus, Plus, SemiColon, Slash, Star,
 
   // One or two character tokens.
-  BANG, BangEqual,
-  EQUAL, EqualEqual,
-  GREATER, GreaterEqual,
-  LESS, LessEqual,
+  Bang, BangEqual,
+  Equal, EqualEqual,
+  Greater, GreaterEqual,
+  Less, LessEqual,
 
   // Literals.
   Identifier, STRING, Number,
