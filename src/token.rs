@@ -3,10 +3,10 @@ use crate::token_type::TokenType;
 use crate::traits::Serialise;
 
 pub struct Token {
-  token: TokenType,
-  lexeme: &'static str,
-  literal: &'static str,
-  line: u16
+  pub token: TokenType,
+  pub lexeme: String,
+  pub literal: String,
+  pub line: u16
 }
  
 impl Serialise for Token {

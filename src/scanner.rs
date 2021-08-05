@@ -21,14 +21,14 @@ impl Lexer for Scanner {
     } 
     tokens.push(Token {
       token: TokenType::Eof,
-      lexeme: "some part of speech",
+      lexeme: "some part of speech".to_string(),
       line: 1,
-      literal: "super literal"
+      literal: "super literal".to_string()
     });
     return tokens;
   }
 
-  fn scan_token(&self) -> Token {
+  fn scan_token(&mut self) {
     let character = self.get_next_char();
     match character {
       '(' => self.add_token(TokenType::LeftParen),
@@ -45,12 +45,12 @@ impl Lexer for Scanner {
     }
   }
   
-  fn add_token(&self, token: TokenType) {
+  fn add_token(&mut self, token: TokenType) {
     self.add_token_literal(token, "");
   }
 
-  fn add_token_literal(&self, token: TokenType, literal: &str) {
-    let lexeme: &String = &self.source
+  fn add_token_literal(&mut self, token: TokenType, literal: &str) {
+    let lexeme: String = self.source
       .chars()
       .skip(self.start as usize)
       .take(self.current as usize)
@@ -59,11 +59,11 @@ impl Lexer for Scanner {
       token,
       lexeme,
       line: 1,
-      literal: "super literal"
+      literal: literal.to_string()
     });
   }
 
-  fn get_next_char(&self) -> char {
+  fn get_next_char(&mut self) -> char {
     self.current += 1;
     let next = self.source.as_bytes()[self.current as usize];
     return next as char;

@@ -9,6 +9,7 @@ mod token_type;
 mod traits;
 mod scanner;
 mod error_reporter;
+mod lexer;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
