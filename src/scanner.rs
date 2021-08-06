@@ -13,23 +13,27 @@ pub struct Scanner {
 }
 
 impl Lexer for Scanner {
-  fn scan_tokens(&self) -> Vec<Token> {
+  fn scan_tokens(&mut self) -> Vec<Token> {
     let mut tokens = vec![]; 
+    let mut start = 0;
+    let mut current = 0;
+    let mut line = 0;
     while !self.is_at_end() {
-
+      start = current;
+      self.scan_token();
       // tokens.push(value: T)
     } 
     tokens.push(Token {
       token: TokenType::Eof,
-      lexeme: "some part of speech".to_string(),
-      line: 1,
-      literal: "super literal".to_string()
+      lexeme: "".to_string(),
+      line,
+      literal: "".to_string()
     });
-    return tokens;
+    tokens
   }
 
   fn scan_token(&mut self) {
-    let character = self.get_next_char();
+    let character = self.advance();
     match character {
       '(' => self.add_token(TokenType::LeftParen),
       ')' => self.add_token(TokenType::RightParen),
@@ -63,13 +67,13 @@ impl Lexer for Scanner {
     });
   }
 
-  fn get_next_char(&mut self) -> char {
+  fn advance(&mut self) -> char {
     self.current += 1;
     let next = self.source.as_bytes()[self.current as usize];
-    return next as char;
+    next as char
   }
 
   fn is_at_end(&self) -> bool {
-    return self.current >= self.source.len() as u32;
+    self.current >= self.source.len() as u32
   }
 }
