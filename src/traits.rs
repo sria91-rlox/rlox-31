@@ -8,6 +8,8 @@ pub trait Lexer {
   fn add_token(&mut self, token: TokenType);
   fn add_token_literal(&mut self, token: TokenType, literal: &str);
   fn advance(&mut self) -> char;
+  fn advance_if_next(&mut self, expected: char) -> bool;
+  fn peek(&self) -> char;
 }
 
 pub trait Serialise {

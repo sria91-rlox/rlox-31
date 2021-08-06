@@ -45,6 +45,13 @@ impl Lexer for Scanner {
       '+' => self.add_token(TokenType::Plus),
       ';' => self.add_token(TokenType::SemiColon),
       '*' => self.add_token(TokenType::Star),
+      ' ' | '\r' | '\t' => (),
+      '\n' => self.line += 1,
+      '/' => if self.advance_if_next('/') { while self.peek() != '\n' { self.advance(); } } else {  self.add_token(TokenType::Slash); }
+      '!' => if self.advance_if_next('=') { self.add_token(TokenType::BangEqual) } else { self.add_token(TokenType::BangEqual) }
+      '=' => if self.advance_if_next('=') { self.add_token(TokenType::EqualEqual) } else { self.add_token(TokenType::Equal) }
+      '<' => if self.advance_if_next('=') { self.add_token(TokenType::LessEqual) } else { self.add_token(TokenType::Less) }
+      '>' => if self.advance_if_next('=') { self.add_token(TokenType::GreaterEqual) } else { self.add_token(TokenType::Greater) }
       _ => error(self.line, "Unexpected character")
     }
   }
@@ -71,6 +78,21 @@ impl Lexer for Scanner {
     self.current += 1;
     let next = self.source.as_bytes()[self.current as usize];
     next as char
+  }
+
+  fn advance_if_next(&mut self, expected: char) -> bool {
+    if self.is_at_end() { return false }
+    let next_char = self.source.as_bytes()[(self.current + 1) as usize] as char;
+    if next_char != expected { return false }
+    self.current += 1;
+    true
+  }
+
+  fn peek(&self) -> char {
+    if self.is_at_end() {
+      return '\0'
+    }
+    self.source.as_bytes()[self.current as usize] as char
   }
 
   fn is_at_end(&self) -> bool {
