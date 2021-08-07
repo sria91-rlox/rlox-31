@@ -47,11 +47,12 @@ impl Lexer for Scanner {
       '*' => self.add_token(TokenType::Star),
       ' ' | '\r' | '\t' => (),
       '\n' => self.line += 1,
-      '/' => if self.advance_if_next('/') { while self.peek() != '\n' { self.advance(); } } else {  self.add_token(TokenType::Slash); }
-      '!' => if self.advance_if_next('=') { self.add_token(TokenType::BangEqual) } else { self.add_token(TokenType::BangEqual) }
-      '=' => if self.advance_if_next('=') { self.add_token(TokenType::EqualEqual) } else { self.add_token(TokenType::Equal) }
-      '<' => if self.advance_if_next('=') { self.add_token(TokenType::LessEqual) } else { self.add_token(TokenType::Less) }
-      '>' => if self.advance_if_next('=') { self.add_token(TokenType::GreaterEqual) } else { self.add_token(TokenType::Greater) }
+      '/' => if self.advance_if_next('/') { while self.peek() != '\n' { self.advance(); } } else {  self.add_token(TokenType::Slash); },
+      '!' => if self.advance_if_next('=') { self.add_token(TokenType::BangEqual) } else { self.add_token(TokenType::BangEqual) },
+      '=' => if self.advance_if_next('=') { self.add_token(TokenType::EqualEqual) } else { self.add_token(TokenType::Equal) },
+      '<' => if self.advance_if_next('=') { self.add_token(TokenType::LessEqual) } else { self.add_token(TokenType::Less) },
+      '>' => if self.advance_if_next('=') { self.add_token(TokenType::GreaterEqual) } else { self.add_token(TokenType::Greater) },
+      '"' => self.string(),
       _ => error(self.line, "Unexpected character")
     }
   }
@@ -97,5 +98,21 @@ impl Lexer for Scanner {
 
   fn is_at_end(&self) -> bool {
     self.current >= self.source.len() as u32
+  }
+
+  fn string(&mut self) {
+    while self.peek() != '"' && !self.is_at_end() {
+      if self.peek() == '\n' { self.line += 1; }
+      self.advance();
+    }
+    if self.is_at_end() {
+      error(self.line, "Unterminated string.");
+      return;
+    }
+
+    self.advance();
+
+    let value = &self.source[(self.start + 1) as usize..(self.current - 1) as usize];
+    self.add_token_literal(TokenType::STRING, value);
   }
 }

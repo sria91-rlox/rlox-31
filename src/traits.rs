@@ -10,6 +10,7 @@ pub trait Lexer {
   fn advance(&mut self) -> char;
   fn advance_if_next(&mut self, expected: char) -> bool;
   fn peek(&self) -> char;
+  fn string(&mut self);
 }
 
 pub trait Serialise {
