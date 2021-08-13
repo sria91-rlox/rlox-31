@@ -1,20 +1,19 @@
-
-use crate::traits::Lexer;
 use crate::error_reporter::error;
 use crate::token::Token;
 use crate::token_type::TokenType;
+use crate::traits::Lexer;
 
 pub struct Scanner {
-  source: &'static str,
+  source: String,
   tokens: Vec<Token>,
   start: u32,
   current: u32,
-  line: u32
+  line: u32,
 }
 
 impl Lexer for Scanner {
   fn scan_tokens(&mut self) -> Vec<Token> {
-    let mut tokens = vec![]; 
+    let mut tokens = vec![];
     let mut start = 0;
     let mut current = 0;
     let mut line = 0;
@@ -22,12 +21,12 @@ impl Lexer for Scanner {
       start = current;
       self.scan_token();
       // tokens.push(value: T)
-    } 
+    }
     tokens.push(Token {
       token: TokenType::Eof,
       lexeme: "".to_string(),
       line,
-      literal: "".to_string()
+      literal: "".to_string(),
     });
     tokens
   }
@@ -47,22 +46,54 @@ impl Lexer for Scanner {
       '*' => self.add_token(TokenType::Star),
       ' ' | '\r' | '\t' => (),
       '\n' => self.line += 1,
-      '/' => if self.advance_if_next('/') { while self.peek() != '\n' { self.advance(); } } else {  self.add_token(TokenType::Slash); },
-      '!' => if self.advance_if_next('=') { self.add_token(TokenType::BangEqual) } else { self.add_token(TokenType::BangEqual) },
-      '=' => if self.advance_if_next('=') { self.add_token(TokenType::EqualEqual) } else { self.add_token(TokenType::Equal) },
-      '<' => if self.advance_if_next('=') { self.add_token(TokenType::LessEqual) } else { self.add_token(TokenType::Less) },
-      '>' => if self.advance_if_next('=') { self.add_token(TokenType::GreaterEqual) } else { self.add_token(TokenType::Greater) },
+      '/' => {
+        if self.advance_if_next('/') {
+          while self.peek() != '\n' {
+            self.advance();
+          }
+        } else {
+          self.add_token(TokenType::Slash);
+        }
+      }
+      '!' => {
+        if self.advance_if_next('=') {
+          self.add_token(TokenType::BangEqual)
+        } else {
+          self.add_token(TokenType::BangEqual)
+        }
+      }
+      '=' => {
+        if self.advance_if_next('=') {
+          self.add_token(TokenType::EqualEqual)
+        } else {
+          self.add_token(TokenType::Equal)
+        }
+      }
+      '<' => {
+        if self.advance_if_next('=') {
+          self.add_token(TokenType::LessEqual)
+        } else {
+          self.add_token(TokenType::Less)
+        }
+      }
+      '>' => {
+        if self.advance_if_next('=') {
+          self.add_token(TokenType::GreaterEqual)
+        } else {
+          self.add_token(TokenType::Greater)
+        }
+      }
       '"' => self.string(),
-      _ => error(self.line, "Unexpected character")
+      _ => error(self.line, "Unexpected character"),
     }
   }
-  
   fn add_token(&mut self, token: TokenType) {
     self.add_token_literal(token, "");
   }
 
   fn add_token_literal(&mut self, token: TokenType, literal: &str) {
-    let lexeme: String = self.source
+    let lexeme = self
+      .source
       .chars()
       .skip(self.start as usize)
       .take(self.current as usize)
@@ -71,7 +102,7 @@ impl Lexer for Scanner {
       token,
       lexeme,
       line: 1,
-      literal: literal.to_string()
+      literal: literal.to_string(),
     });
   }
 
@@ -82,16 +113,20 @@ impl Lexer for Scanner {
   }
 
   fn advance_if_next(&mut self, expected: char) -> bool {
-    if self.is_at_end() { return false }
+    if self.is_at_end() {
+      return false;
+    }
     let next_char = self.source.as_bytes()[(self.current + 1) as usize] as char;
-    if next_char != expected { return false }
+    if next_char != expected {
+      return false;
+    }
     self.current += 1;
     true
   }
 
   fn peek(&self) -> char {
     if self.is_at_end() {
-      return '\0'
+      return '\0';
     }
     self.source.as_bytes()[self.current as usize] as char
   }
@@ -102,7 +137,9 @@ impl Lexer for Scanner {
 
   fn string(&mut self) {
     while self.peek() != '"' && !self.is_at_end() {
-      if self.peek() == '\n' { self.line += 1; }
+      if self.peek() == '\n' {
+        self.line += 1;
+      }
       self.advance();
     }
     if self.is_at_end() {
@@ -112,7 +149,13 @@ impl Lexer for Scanner {
 
     self.advance();
 
-    let value = &self.source[(self.start + 1) as usize..(self.current - 1) as usize];
-    self.add_token_literal(TokenType::STRING, value);
+    let value: String = self
+      .source
+      .chars()
+      .skip((self.start + 1) as usize)
+      .take((self.current - 1) as usize)
+      .collect();
+
+    self.add_token_literal(TokenType::STRING, value.as_str());
   }
 }
